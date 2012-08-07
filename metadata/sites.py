@@ -1,8 +1,6 @@
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import ForeignKey, ManyToManyField
+from django.db.models import ManyToManyField
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save, pre_delete, m2m_changed
-from django.utils.translation import ugettext_lazy as _
 
 from lemon import extradmin
 
@@ -32,11 +30,14 @@ class MetadataSite(object):
         model_admin = extradmin.site._registry.get(model)
         if not model_admin:
             return
-        metadata_inline_instance = self.inline_admin_class(model, extradmin.site)
+
+        inline_instance = self.inline_admin_class(model, extradmin.site)
         original_get_inline_instances = model_admin.get_inline_instances
+
         def get_inline_instances(request):
             inline_instances = original_get_inline_instances(request)
-            return inline_instances + [metadata_inline_instance]
+            return inline_instances + [inline_instance]
+
         model_admin.get_inline_instances = get_inline_instances
 
     def register(self, model_or_iterable, model_metadata_class=None, **options):
@@ -113,7 +114,8 @@ class MetadataSite(object):
         instance = kwargs['instance']
         action = kwargs['action']
         model_metadata = self._registry.get(instance.__class__)
-        if model_metadata and action in ('post_add', 'post_remove', 'post_clear'):
+        actions = ('post_add', 'post_remove', 'post_clear')
+        if model_metadata and action in actions:
             try:
                 metadata = Metadata.objects.get_for_content_object(instance)
             except Metadata.DoesNotExist:

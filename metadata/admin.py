@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
@@ -34,12 +33,9 @@ class MetadataAdmin(extradmin.ModelAdmin):
         'changelist_title': _(u'Choose metadata to change'),
         'changelist_popup_title': _(u'Choose metadata'),
         'changelist_addlink_title': _(u'Add metadata'),
-        'changelist_paginator_description': lambda n: \
-            ungettext(
-                '%(count)d page has metadata',
-                '%(count)d pages have metadata',
-                n,
-            ),
+        'changelist_paginator_description': lambda n: ungettext(
+            '%(count)d page has metadata', '%(count)d pages have metadata', n
+        ),
     }
 
 

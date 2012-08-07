@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import NoArgsCommand
-
 from lemon import extradmin
 
 from metadata import site
@@ -18,7 +15,10 @@ class Command(NoArgsCommand):
         print 'Starting metadata synchronisation with all registered models.'
         extradmin.autodiscover()
         for model, metadata in site._registry.items():
-            print 'Syncing %s.%s model.' % (model._meta.app_label, model.__name__)
+            print 'Syncing %s.%s model.' % (
+                model._meta.app_label,
+                model.__name__,
+            )
             self.sync_metadata(model, metadata)
         print 'All objects with `get_absolute_url` method was synced.',
         print 'Removing orphaned metadata.'

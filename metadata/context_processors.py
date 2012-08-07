@@ -1,5 +1,3 @@
-import re
-
 from django.utils.functional import SimpleLazyObject
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
@@ -23,10 +21,10 @@ class MetadataContextObject(object):
 
     def _get_metadata(self, url_path, site):
         queryset = Metadata.objects.filter(
-            url_path = url_path,
-            language = get_language(),
-            sites = site,
-            enabled = True,
+            url_path=url_path,
+            language=get_language(),
+            sites=site,
+            enabled=True,
         )
         try:
             return queryset[0]

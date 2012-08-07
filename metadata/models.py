@@ -36,7 +36,8 @@ class Metadata(models.Model):
         _(u'language'), max_length=10, db_index=True,
         choices=LANGUAGES, default=get_language)
     sites = models.ManyToManyField(
-        Site, null=True, blank=True, related_name='+', verbose_name=_(u'sites'))
+        Site, null=True, blank=True, related_name='+',
+        verbose_name=_(u'sites'))
     content_type = models.ForeignKey(ContentType, null=True, editable=False)
     object_id = models.PositiveIntegerField(null=True, editable=False)
     content_object = generic.GenericForeignKey('content_type', 'object_id')

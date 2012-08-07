@@ -9,4 +9,7 @@ class MetadataQuerySet(QuerySet):
 
     def filter_by_content_object(self, content_object):
         content_type = ContentType.objects.get_for_model(content_object)
-        return self.filter(content_type=content_type, object_id=content_object.pk)
+        return self.filter(
+            content_type=content_type,
+            object_id=content_object.pk,
+        )
