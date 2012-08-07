@@ -13,31 +13,58 @@ LANGUAGES = tuple((code, _(name)) for code, name in settings.LANGUAGES)
 
 class Metadata(models.Model):
 
-    url_path = models.CharField(_('URL path'), max_length=255, db_index=True)
+    url_path = models.CharField(
+        verbose_name=_('URL path'),
+        max_length=255,
+        db_index=True,
+    )
     title = models.CharField(
-        _(u'page title'), max_length=255, blank=True,
-        help_text=_(u'Displayed in browser window title.'))
+        verbose_name=_(u'page title'),
+        max_length=255,
+        blank=True,
+        help_text=_(u'Displayed in browser window title.'),
+    )
     title_extend = models.BooleanField(
-        _(u'extend page title with site name'), default=True,
-        help_text=_(u'For example, <strong>Page title - Site name</strong>'))
+        verbose_name=_(u'extend page title with site name'),
+        default=True,
+        help_text=_(u'For example, <strong>Page title - Site name</strong>'),
+    )
     keywords = models.TextField(
-        _(u'page keywords'), blank=True,
-        help_text=_(u'Keywords are terms describing web page content and '
-                    u'used by search engines. Here you can enumerate some '
-                    u'words divided by commas.'))
+        verbose_name=_(u'page keywords'),
+        blank=True,
+        help_text=_(
+            u'Keywords are terms describing web page content and used '
+            u'by search engines. Here you can enumerate some words '
+            u'divided by commas.'
+        ),
+    )
     description = models.TextField(
-        _(u'page description'), blank=True,
-        help_text=_(u'Here you can set short description of this page for '
-                    u'search engines.'))
+        verbose_name=_(u'page description'),
+        blank=True,
+        help_text=_(
+            u'Here you can set short description of this page '
+            u'for search engines.'
+        ),
+    )
     enabled = models.BooleanField(
-        _(u'enabled'), default=False,
-        help_text=_(u'If not set, meta tags will not be used on page.'))
+        verbose_name=_(u'enabled'),
+        default=False,
+        help_text=_(u'If not set, meta tags will not be used on page.'),
+    )
     language = models.CharField(
-        _(u'language'), max_length=10, db_index=True,
-        choices=LANGUAGES, default=get_language)
+        verbose_name=_(u'language'),
+        max_length=10,
+        db_index=True,
+        choices=LANGUAGES,
+        default=get_language,
+    )
     sites = models.ManyToManyField(
-        Site, null=True, blank=True, related_name='+',
-        verbose_name=_(u'sites'))
+        to=Site,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name=_(u'sites'),
+    )
     content_type = models.ForeignKey(ContentType, null=True, editable=False)
     object_id = models.PositiveIntegerField(null=True, editable=False)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
