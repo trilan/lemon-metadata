@@ -18,6 +18,21 @@ class Metadata(models.Model):
         max_length=255,
         db_index=True,
     )
+    sites = models.ManyToManyField(
+        to=Site,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name=_(u'sites'),
+    )
+    language = models.CharField(
+        verbose_name=_(u'language'),
+        max_length=10,
+        db_index=True,
+        choices=LANGUAGES,
+        default=get_language,
+    )
+
     title = models.CharField(
         verbose_name=_(u'page title'),
         max_length=255,
@@ -46,25 +61,13 @@ class Metadata(models.Model):
             u'for search engines.'
         ),
     )
+
     enabled = models.BooleanField(
         verbose_name=_(u'enabled'),
         default=False,
         help_text=_(u'If not set, meta tags will not be used on page.'),
     )
-    language = models.CharField(
-        verbose_name=_(u'language'),
-        max_length=10,
-        db_index=True,
-        choices=LANGUAGES,
-        default=get_language,
-    )
-    sites = models.ManyToManyField(
-        to=Site,
-        null=True,
-        blank=True,
-        related_name='+',
-        verbose_name=_(u'sites'),
-    )
+
     content_type = models.ForeignKey(ContentType, null=True, editable=False)
     object_id = models.PositiveIntegerField(null=True, editable=False)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
