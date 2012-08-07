@@ -7,6 +7,6 @@ CONFIG = {
     'TITLE_SEPARATOR': u' — ',
     'TITLE_REVERSED': False,
 }
-CONFIG.update(getattr(settings, 'METATAGS_CONFIG', {}))
-TITLE_SEPARATOR = getattr(settings, 'METATAGS_TITLE_SEPARATOR', u' — ')
-TITLE_REVERSED = getattr(settings, 'METATAGS_TITLE_REVERSED', False)
+CONFIG.update(getattr(settings, 'METADATA_CONFIG', {}))
+TITLE_SEPARATOR = getattr(settings, 'METADATA_TITLE_SEPARATOR', u' — ')
+TITLE_REVERSED = getattr(settings, 'METADATA_TITLE_REVERSED', False)
