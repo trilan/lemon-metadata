@@ -8,3 +8,12 @@ class Article(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+class Person(models.Model):
+
+    fullname = models.CharField(max_length=100)
+    bio = models.TextField()
+
+    def __unicode__(self):
+        return self.fullname

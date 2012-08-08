@@ -19,6 +19,10 @@ class NotRegistered(Exception):
     pass
 
 
+class NotRegisteredInAdmin(Exception):
+    pass
+
+
 class MetadataSite(object):
 
     inline_admin_class = MetadataInline
@@ -29,7 +33,8 @@ class MetadataSite(object):
     def _append_inline_instance(self, model):
         model_admin = extradmin.site._registry.get(model)
         if not model_admin:
-            return
+            raise NotRegisteredInAdmin(
+                u'The model %s is not registered in admin' % model.__name__)
 
         inline_instance = self.inline_admin_class(model, extradmin.site)
         original_get_inline_instances = model_admin.get_inline_instances
