@@ -43,7 +43,9 @@ class DefaultModelMetadataTests(TestCase):
 
     def test_returns_all_sites(self):
         sites = self.model_metadata.sites(self.article)
-        self.assertItemsEqual(sites, [self.default_site, self.custom_site])
+        self.assertEqual(len(sites), 2)
+        self.assertIn(self.default_site, sites)
+        self.assertIn(self.custom_site, sites)
 
 
 class FilledModelMetadataTests(TestCase):
@@ -66,12 +68,15 @@ class FilledModelMetadataTests(TestCase):
 
     def test_returns_object_site(self):
         sites = self.model_metadata.sites(self.article)
-        self.assertItemsEqual(sites, [self.site1])
+        self.assertEqual(len(sites), 1)
+        self.assertIn(self.site1, sites)
 
     def test_returns_object_sites(self):
         self.model_metadata.sites_field_name = 'sites'
         sites = self.model_metadata.sites(self.forum)
-        self.assertItemsEqual(sites, [self.site1, self.site2])
+        self.assertEqual(len(sites), 2)
+        self.assertIn(self.site1, sites)
+        self.assertIn(self.site2, sites)
 
     def test_returns_empty_list_of_sites_if_field_name_is_wrong(self):
         self.model_metadata.sites_field_name = 'abcdef'
