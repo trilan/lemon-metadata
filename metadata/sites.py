@@ -99,7 +99,7 @@ class MetadataSite(object):
             else:
                 metadata.update_language()
 
-    def check_metatag_site(self, sender, **kwargs):
+    def check_metadata_site(self, sender, **kwargs):
         instance = kwargs['instance']
         model_metadata = self._registry.get(sender)
         if model_metadata:
@@ -110,7 +110,7 @@ class MetadataSite(object):
             else:
                 metadata.update_sites()
 
-    def check_metatag_sites(self, sender, **kwargs):
+    def check_metadata_sites(self, sender, **kwargs):
         instance = kwargs['instance']
         action = kwargs['action']
         model_metadata = self._registry.get(instance.__class__)
