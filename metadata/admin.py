@@ -3,21 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 
 from lemon import extradmin
-from lemon.extradmin import generic
 
 from .models import Metadata
 from .widgets import AdminSmallTextareaWidget
-
-
-class MetadataInline(generic.GenericStackedInline):
-
-    model = Metadata
-    exclude = ('url_path', 'language', 'sites')
-    extra = 1
-    max_num = 1
-    formfield_overrides = {
-        models.TextField: {'widget': AdminSmallTextareaWidget},
-    }
 
 
 class MetadataAdmin(extradmin.ModelAdmin):
