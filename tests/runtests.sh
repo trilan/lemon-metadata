@@ -4,5 +4,12 @@ set -e
 
 export PYTHONPATH=$PWD/..:$PYTHONPATH
 
-django-admin.py test --settings=tests.settings_sites test_sites
-django-admin.py test --settings=tests.settings_options test_options
+TYPES="sites options context_processors"
+
+if [ $# -gt 0 ]; then
+  TYPES=$@
+fi
+
+for type in $TYPES; do
+  django-admin.py test --settings=tests.settings_$type test_$type
+done
