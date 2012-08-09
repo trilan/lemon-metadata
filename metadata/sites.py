@@ -1,11 +1,7 @@
-from django.db.models import ManyToManyField
 from django.db.models.base import ModelBase
-from django.db.models.signals import post_save, pre_delete, m2m_changed
-
 from lemon import extradmin
 
 from .admin import MetadataInline
-from .models import Metadata
 from .options import ModelMetadata
 
 
@@ -55,76 +51,7 @@ class MetadataSite(object):
                     u'The model %s already registered' % model.__name__)
 
             self._append_inline_instance(model)
-
-            if options:
-                options['__module__'] = __name__
-                model_metadata_class = type(
-                    '%sMetadata' % model.__name__,
-                    (model_metadata_class,), options)
-            model_metadata = model_metadata_class()
-            self._registry[model] = model_metadata
-
-            pre_delete.connect(self.delete_metadata, sender=model)
-            post_save.connect(self.check_metadata_url_path, sender=model)
-            post_save.connect(self.check_metadata_language, sender=model)
-
-            sites_field_class = model_metadata.sites_field_class(model)
-            if sites_field_class is ManyToManyField:
-                through_model = getattr(
-                    model, model_metadata.sites_field_name).through
-                m2m_changed.connect(
-                    self.check_metadata_sites, sender=through_model)
-            else:
-                post_save.connect(self.check_metadata_site, sender=model)
-
-    def delete_metadata(self, sender, **kwargs):
-        Metadata.objects.filter_by_content_object(kwargs['instance']).delete()
-
-    def check_metadata_url_path(self, sender, **kwargs):
-        instance = kwargs['instance']
-        model_metadata = self._registry.get(sender)
-        if model_metadata:
-            try:
-                metadata = Metadata.objects.get_for_content_object(instance)
-            except Metadata.DoesNotExist:
-                pass
-            else:
-                metadata.update_url_path()
-
-    def check_metadata_language(self, sender, **kwargs):
-        instance = kwargs['instance']
-        model_metadata = self._registry.get(sender)
-        if model_metadata:
-            try:
-                metadata = Metadata.objects.get_for_content_object(instance)
-            except Metadata.DoesNotExist:
-                pass
-            else:
-                metadata.update_language()
-
-    def check_metadata_site(self, sender, **kwargs):
-        instance = kwargs['instance']
-        model_metadata = self._registry.get(sender)
-        if model_metadata:
-            try:
-                metadata = Metadata.objects.get_for_content_object(instance)
-            except Metadata.DoesNotExist:
-                pass
-            else:
-                metadata.update_sites()
-
-    def check_metadata_sites(self, sender, **kwargs):
-        instance = kwargs['instance']
-        action = kwargs['action']
-        model_metadata = self._registry.get(instance.__class__)
-        actions = ('post_add', 'post_remove', 'post_clear')
-        if model_metadata and action in actions:
-            try:
-                metadata = Metadata.objects.get_for_content_object(instance)
-            except Metadata.DoesNotExist:
-                pass
-            else:
-                metadata.update_sites()
+            self._registry[model] = model_metadata_class(model, **options)
 
 
 site = MetadataSite()
