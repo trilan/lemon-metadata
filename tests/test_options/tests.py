@@ -1,8 +1,12 @@
+from mock import patch
+
 from django.contrib.sites.models import Site
 from django.test import TestCase
 from django.utils import translation
 
 from metadata.options import ModelMetadata
+from metadata.models import Metadata
+
 from .models import Article, Forum
 
 
@@ -36,6 +40,9 @@ class DefaultModelMetadataTests(TestCase):
         self.article = create_article(language='ru')
         self.article_metadata = ModelMetadata(Article)
 
+    def tearDown(self):
+        self.article_metadata._disconnect_signal_handlers()
+
     def test_returns_current_language(self):
         with translation.override('en'):
             language = self.article_metadata.language(self.article)
@@ -64,6 +71,10 @@ class FilledModelMetadataTests(TestCase):
         self.forum_metadata = ModelMetadata(Forum)
         self.forum_metadata.language_field_name = 'language'
         self.forum_metadata.sites_field_name = 'sites'
+
+    def tearDown(self):
+        self.article_metadata._disconnect_signal_handlers()
+        self.forum_metadata._disconnect_signal_handlers()
 
     def test_returns_object_language(self):
         with translation.override('en'):
@@ -95,6 +106,40 @@ class FilledModelMetadataTests(TestCase):
         url_path = self.article_metadata.url_path(self.article)
         self.assertEqual(url_path, '/articles/{0}/'.format(self.article.pk))
 
-    def test_returns_none_if_object_has_no_absolute_url(self):
-        url_path = self.forum_metadata.url_path(self.forum)
-        self.assertIsNone(url_path)
+
+class ModelMetadataSignalHandlersTests(TestCase):
+
+    def setUp(self):
+        self.article_metadata = ModelMetadata(Article)
+        self.forum_metadata = ModelMetadata(Forum, sites_field_name='sites')
+
+    def tearDown(self):
+        self.article_metadata._disconnect_signal_handlers()
+        self.forum_metadata._disconnect_signal_handlers()
+
+    @patch.object(ModelMetadata, 'update_metadata')
+    def test_metadata_created_on_object_creation(self, update_metadata):
+        article = create_article()
+        self.assertEqual(update_metadata.call_count, 1)
+        self.assertEqual(update_metadata.call_args[0][0].content_object, article)
+
+    def test_metadata_updated_on_object_update(self):
+        article = create_article()
+        metadata = Metadata.objects.get_for_content_object(article)
+        with patch.object(ModelMetadata, 'update_metadata') as update_metadata:
+            article.save()
+            update_metadata.assert_called_once_with(metadata)
+
+    def test_metadata_updated_if_sites_changed(self):
+        forum = create_forum()
+        metadata = Metadata.objects.get_for_content_object(forum)
+        with patch.object(ModelMetadata, 'update_metadata') as update_metadata:
+            forum.sites.add(create_site())
+            update_metadata.assert_called_once_with(metadata)
+
+    def test_metadata_deleted_on_object_deletion(self):
+        article = create_article()
+        metadata = Metadata.objects.get_for_content_object(article)
+        with patch.object(ModelMetadata, 'delete_metadata') as delete_metadata:
+            article.delete()
+            delete_metadata.assert_called_once_with(metadata)

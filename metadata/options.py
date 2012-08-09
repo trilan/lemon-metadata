@@ -18,16 +18,19 @@ class ModelMetadata(object):
         self._connect_signal_handlers()
 
     def _connect_signal_handlers(self):
-        pre_delete.connect(self.delete_metadata, sender=self.model)
-        post_save.connect(self.check_metadata_url_path, sender=self.model)
-        post_save.connect(self.check_metadata_language, sender=self.model)
+        post_save.connect(self.handle_object_update, sender=self.model)
+        pre_delete.connect(self.handle_object_deletion, sender=self.model)
 
         sites_field_class = self.sites_field_class()
         if sites_field_class is ManyToManyField:
-            through = getattr(self.model, self.sites_field_name).through
-            m2m_changed.connect(self.check_metadata_sites, sender=through)
-        elif sites_field_class is ForeignKey:
-            post_save.connect(self.check_metadata_site, sender=self.model)
+            self._through = getattr(self.model, self.sites_field_name).through
+            m2m_changed.connect(self.handle_object_update, self._through)
+
+    def _disconnect_signal_handlers(self):
+        post_save.disconnect(self.handle_object_update, sender=self.model)
+        pre_delete.disconnect(self.handle_object_deletion, sender=self.model)
+        if hasattr(self, '_through'):
+            m2m_changed.disconnect(self.handle_object_update, self._through)
 
     def sites_field_class(self):
         try:
@@ -57,38 +60,37 @@ class ModelMetadata(object):
         except Exception:
             return None
 
-    def delete_metadata(self, sender, **kwargs):
-        Metadata.objects.filter_by_content_object(kwargs['instance']).delete()
+    def handle_object_update(self, sender, **kwargs):
+        raw = kwargs.get('raw')
+        action = kwargs.get('action', 'post_save')
+        actions = ('post_add', 'post_remove', 'post_clear', 'post_save')
+        if raw or action not in actions:
+            return
 
-    def check_metadata_url_path(self, sender, **kwargs):
+        instance = kwargs['instance']
+        try:
+            metadata = Metadata.objects.get_for_content_object(instance)
+        except Metadata.DoesNotExist:
+            metadata = Metadata(content_object=instance)
+        self.update_metadata(metadata)
+
+    def handle_object_deletion(self, sender, **kwargs):
         instance = kwargs['instance']
         try:
             metadata = Metadata.objects.get_for_content_object(instance)
         except Metadata.DoesNotExist:
             return
-        metadata.update_url_path()
+        self.delete_metadata(metadata)
 
-    def check_metadata_language(self, sender, **kwargs):
-        instance = kwargs['instance']
-        try:
-            metadata = Metadata.objects.get_for_content_object(instance)
-        except Metadata.DoesNotExist:
-            return
-        metadata.update_language()
+    def update_metadata(self, metadata):
+        obj = metadata.content_object
 
-    def check_metadata_site(self, sender, **kwargs):
-        instance = kwargs['instance']
-        try:
-            metadata = Metadata.objects.get_for_content_object(instance)
-        except Metadata.DoesNotExist:
-            return
-        metadata.update_sites()
+        metadata.url_path = self.url_path(obj)
+        metadata.language = self.language(obj)
+        metadata.save()
 
-    def check_metadata_sites(self, sender, **kwargs):
-        instance = kwargs['instance']
-        if kwargs['action'] in ('post_add', 'post_remove', 'post_clear'):
-            try:
-                metadata = Metadata.objects.get_for_content_object(instance)
-            except Metadata.DoesNotExist:
-                return
-            metadata.update_sites()
+        metadata.sites.clear()
+        metadata.sites.add(*self.sites(obj))
+
+    def delete_metadata(self, metadata):
+        metadata.delete()
