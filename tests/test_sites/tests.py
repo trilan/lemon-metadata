@@ -4,7 +4,7 @@ from django.test import TestCase
 from metadata import MetadataSite
 from metadata.sites import NotRegisteredInAdmin
 
-from .models import Article, Forum, Person
+from .models import Article, Person
 
 
 admin.autodiscover()
@@ -18,11 +18,6 @@ class MetadataSiteTests(TestCase):
     def test_registers_model(self):
         self.site.register(Article)
         self.assertIn(Article, self.site._registry)
-
-    def test_registers_model_list(self):
-        self.site.register((Article, Forum))
-        self.assertIn(Article, self.site._registry)
-        self.assertIn(Forum, self.site._registry)
 
     def test_raises_exception_if_model_isnt_registered_in_admin(self):
         with self.assertRaises(NotRegisteredInAdmin):
