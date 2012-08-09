@@ -10,12 +10,10 @@ from .options import ModelMetadata
 
 
 class AlreadyRegistered(Exception):
-
     pass
 
 
 class NotRegistered(Exception):
-
     pass
 
 
