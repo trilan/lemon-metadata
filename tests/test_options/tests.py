@@ -112,6 +112,39 @@ class FilledModelMetadataTests(TestCase):
         self.assertEqual(url_path, '/articles/{0}/'.format(self.article.pk))
 
 
+class ModelMetadataUpdateTests(TestCase):
+
+    def setUp(self):
+        self.site1 = create_site()
+        self.site2 = create_site()
+        self.forum = create_forum(language='ru', sites=[self.site1, self.site2])
+        self.metadata = Metadata(content_object=self.forum)
+        self.forum_metadata = ModelMetadata(Forum,
+            sites_field_name='sites',
+            language_field_name='language',
+        )
+        self.forum_metadata.update_metadata(self.metadata)
+
+    def test_creates_metadata(self):
+        self.assertIsNotNone(self.metadata)
+        self.assertEqual(self.metadata.url_path, '/forums/1/')
+        self.assertEqual(self.metadata.language, 'ru')
+
+        sites = self.metadata.sites.all()
+        self.assertEqual(len(sites), 2)
+        self.assertIn(self.site1, sites)
+        self.assertIn(self.site2, sites)
+
+    def test_updates_metadata(self):
+        self.forum.language = 'en'
+        self.forum.sites.remove(self.site2)
+        self.forum.save()
+        metadata = Metadata.objects.get_for_content_object(self.forum)
+        self.forum_metadata.update_metadata(metadata)
+        self.assertEqual(metadata.language, 'en')
+        self.assertEqual(list(metadata.sites.all()), [self.site1])
+
+
 class ModelMetadataSignalHandlersTests(TestCase):
 
     def setUp(self):
