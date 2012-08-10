@@ -35,5 +35,9 @@ class MetadataSite(object):
         model_metadata.disable()
         del self._registry[model]
 
+    def unregister_all(self):
+        for model in list(self._registry):
+            self.unregister(model)
+
 
 site = MetadataSite()
