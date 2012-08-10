@@ -22,7 +22,9 @@ class MetadataSite(object):
             raise AlreadyRegistered(
                 u'The model %s already registered' % model.__name__)
 
-        self._registry[model] = model_metadata_class(model, **options)
+        model_metadata = model_metadata_class(model, **options)
+        model_metadata.enable()
+        self._registry[model] = model_metadata
 
 
 site = MetadataSite()

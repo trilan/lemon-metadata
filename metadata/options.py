@@ -15,7 +15,7 @@ class ModelMetadata(object):
         self.model = model
         for name, value in options.items():
             setattr(self, name, value)
-        self._connect_signal_handlers()
+        self._enabled = False
 
     def _connect_signal_handlers(self):
         post_save.connect(self.handle_object_update, sender=self.model)
@@ -31,6 +31,16 @@ class ModelMetadata(object):
         pre_delete.disconnect(self.handle_object_deletion, sender=self.model)
         if hasattr(self, '_through'):
             m2m_changed.disconnect(self.handle_object_update, self._through)
+
+    def enable(self):
+        if not self._enabled:
+            self._connect_signal_handlers()
+            self._enabled = True
+
+    def disable(self):
+        if self._enabled:
+            self._disconnect_signal_handlers()
+            self._enabled = False
 
     def sites_field_class(self):
         try:

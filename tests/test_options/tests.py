@@ -39,9 +39,10 @@ class DefaultModelMetadataTests(TestCase):
         self.custom_site = create_site()
         self.article = create_article(language='ru')
         self.article_metadata = ModelMetadata(Article)
+        self.article_metadata.enable()
 
     def tearDown(self):
-        self.article_metadata._disconnect_signal_handlers()
+        self.article_metadata.disable()
 
     def test_returns_current_language(self):
         with translation.override('en'):
@@ -64,17 +65,21 @@ class FilledModelMetadataTests(TestCase):
         self.article = create_article(language='ru', site=self.site1)
         self.forum = create_forum(language='ru', sites=[self.site1, self.site2])
 
-        self.article_metadata = ModelMetadata(Article)
-        self.article_metadata.language_field_name = 'language'
-        self.article_metadata.sites_field_name = 'site'
+        self.article_metadata = ModelMetadata(Article,
+            language_field_name='language',
+            sites_field_name='site',
+        )
+        self.article_metadata.enable()
 
-        self.forum_metadata = ModelMetadata(Forum)
-        self.forum_metadata.language_field_name = 'language'
-        self.forum_metadata.sites_field_name = 'sites'
+        self.forum_metadata = ModelMetadata(Forum,
+            language_field_name='language',
+            sites_field_name='sites',
+        )
+        self.forum_metadata.enable()
 
     def tearDown(self):
-        self.article_metadata._disconnect_signal_handlers()
-        self.forum_metadata._disconnect_signal_handlers()
+        self.article_metadata.disable()
+        self.forum_metadata.disable()
 
     def test_returns_object_language(self):
         with translation.override('en'):
@@ -111,11 +116,13 @@ class ModelMetadataSignalHandlersTests(TestCase):
 
     def setUp(self):
         self.article_metadata = ModelMetadata(Article)
+        self.article_metadata.enable()
         self.forum_metadata = ModelMetadata(Forum, sites_field_name='sites')
+        self.forum_metadata.enable()
 
     def tearDown(self):
-        self.article_metadata._disconnect_signal_handlers()
-        self.forum_metadata._disconnect_signal_handlers()
+        self.article_metadata.disable()
+        self.forum_metadata.disable()
 
     @patch.object(ModelMetadata, 'update_metadata')
     def test_metadata_created_on_object_creation(self, update_metadata):
