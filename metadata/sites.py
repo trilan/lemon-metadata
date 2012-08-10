@@ -26,5 +26,14 @@ class MetadataSite(object):
         model_metadata.enable()
         self._registry[model] = model_metadata
 
+    def unregister(self, model):
+        if model not in self._registry:
+            raise NotRegistered(
+                u'The model %s is not registered' % model.__name__)
+
+        model_metadata = self._registry[model]
+        model_metadata.disable()
+        del self._registry[model]
+
 
 site = MetadataSite()
