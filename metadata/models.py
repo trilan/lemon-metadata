@@ -64,7 +64,7 @@ class Metadata(models.Model):
 
     enabled = models.BooleanField(
         verbose_name=_(u'enabled'),
-        default=False,
+        default=True,
         help_text=_(u'If not set, meta tags will not be used on page.'),
     )
 
