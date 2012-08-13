@@ -10,7 +10,10 @@ from .widgets import AdminSmallTextareaWidget
 
 class MetadataAdmin(extradmin.ModelAdmin):
 
-    list_display = ('url_path', 'title', 'title_extend', 'language', 'enabled')
+    list_display = (
+        'url_path', 'title', 'title_extend', 'changefreq', 'language',
+        'enabled',
+    )
     list_display_links = ('title',)
     formfield_overrides = {
         models.TextField: {'widget': AdminSmallTextareaWidget},
