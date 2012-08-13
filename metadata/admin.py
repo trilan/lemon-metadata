@@ -14,7 +14,7 @@ class MetadataAdmin(extradmin.ModelAdmin):
         'url_path', 'title', 'title_extend', 'changefreq', 'language',
         'enabled',
     )
-    list_display_links = ('title',)
+    list_display_links = ('url_path', 'title')
     formfield_overrides = {
         models.TextField: {'widget': AdminSmallTextareaWidget},
     }
