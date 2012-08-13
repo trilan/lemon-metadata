@@ -109,7 +109,7 @@ class Metadata(models.Model):
         verbose_name=_(u'last modification date'),
         blank=True,
         null=True,
-        default=timezone.now,
+        auto_now=True,
     )
 
     enabled = models.BooleanField(
