@@ -4,7 +4,7 @@ set -e
 
 export PYTHONPATH=$PWD/..:$PYTHONPATH
 
-TYPES="sites options context_processors"
+TYPES="sites options context_processors views"
 
 if [ $# -gt 0 ]; then
   TYPES=$@
