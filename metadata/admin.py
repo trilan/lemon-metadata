@@ -1,19 +1,26 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-
-from lemon import extradmin
 
 from .models import Metadata
 from .widgets import AdminSmallTextareaWidget
 
 
+if 'lemon.extradmin' in settings.INSTALLED_APPS:
+    from lemon import extradmin as admin
+    CHANGE_FORM_TEMPLATE = 'metadata/lemon/change_form.html'
+else:
+    from django.contrib import admin
+    CHANGE_FORM_TEMPLATE = 'metadata/admin/change_form.html'
+
+
 class MetadataAdminMixin(object):
 
-    change_form_template = 'metadata/admin/change_form.html'
+    change_form_template = CHANGE_FORM_TEMPLATE
 
 
-class MetadataAdmin(extradmin.ModelAdmin):
+class MetadataAdmin(admin.ModelAdmin):
 
     list_display = (
         'url_path', 'title', 'changefreq', 'lastmod', 'language', 'enabled',
@@ -35,4 +42,4 @@ class MetadataAdmin(extradmin.ModelAdmin):
     }
 
 
-extradmin.site.register(Metadata, MetadataAdmin)
+admin.site.register(Metadata, MetadataAdmin)

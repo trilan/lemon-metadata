@@ -4,7 +4,7 @@ set -e
 
 export PYTHONPATH=$PWD/..:$PYTHONPATH
 
-TYPES="sites options context_processors views"
+TYPES="sites options context_processors views django_admin lemon_admin"
 
 if [ $# -gt 0 ]; then
   TYPES=$@
