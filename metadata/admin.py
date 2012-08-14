@@ -8,6 +8,11 @@ from .models import Metadata
 from .widgets import AdminSmallTextareaWidget
 
 
+class MetadataAdminMixin(object):
+
+    change_form_template = 'metadata/admin/change_form.html'
+
+
 class MetadataAdmin(extradmin.ModelAdmin):
 
     list_display = (

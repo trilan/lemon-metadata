@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+{% load i18n metadata %}
+{% load url from future%}
+
+{% block tools-items %}
+  {% get_metadata_for original as metadata %}
+  {% if metadata %}
+    <li><a href="{% url 'admin:metadata_metadata_change' metadata.pk %}">{% trans "Edit metadata" %}</a></li>
+  {% endif %}
+{% endblock %}
