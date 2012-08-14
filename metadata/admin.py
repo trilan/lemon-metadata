@@ -16,10 +16,10 @@ class MetadataAdminMixin(object):
 class MetadataAdmin(extradmin.ModelAdmin):
 
     list_display = (
-        'url_path', 'title', 'title_extend', 'changefreq', 'language',
-        'enabled',
+        'url_path', 'title', 'changefreq', 'lastmod', 'language', 'enabled',
     )
     list_display_links = ('url_path', 'title')
+    list_filter = ('enabled', 'lastmod')
     formfield_overrides = {
         models.TextField: {'widget': AdminSmallTextareaWidget},
     }
