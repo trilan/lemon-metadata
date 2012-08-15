@@ -20,6 +20,10 @@ class MetadataAdminMixin(object):
     change_form_template = CHANGE_FORM_TEMPLATE
 
 
+class MetadataModelAdmin(MetadataAdminMixin, admin.ModelAdmin):
+    pass
+
+
 class MetadataAdmin(admin.ModelAdmin):
 
     list_display = (
