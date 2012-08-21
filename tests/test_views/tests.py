@@ -5,7 +5,6 @@ from django.contrib.sites.models import Site
 from django.test import TestCase, RequestFactory
 
 from metadata.models import Metadata
-from metadata.utils import get_site_id
 from metadata.views import sitemap_xml
 
 
@@ -22,25 +21,6 @@ def create_metadata(**kwargs):
     metadata = Metadata.objects.create(**kwargs)
     metadata.sites.add(*sites)
     return metadata
-
-
-class GetSiteIdTests(TestCase):
-
-    def setUp(self):
-        self.site1 = Site.objects.get(id=1)
-        self.site2 = Site.objects.create(
-            domain='s2.example.com',
-            name='s2.example.com',
-        )
-
-    def test_uses_request_site_attr(self):
-        for site in (self.site1, self.site2):
-            site_id = get_site_id(create_request(site))
-            self.assertEqual(site_id, site.id)
-
-    def test_uses_site_from_settings(self):
-        site_id = get_site_id(create_request())
-        self.assertEqual(site_id, settings.SITE_ID)
 
 
 class SitemapXMLTestCase(TestCase):
