@@ -1,8 +1,7 @@
+import lemon
+
 from django.contrib import admin as django_admin
 from django.test import TestCase
-
-from lemon import extradmin as lemon_admin
-from lemon.extradmin import ModelAdmin
 
 from metadata.admin import MetadataAdmin
 from metadata.models import Metadata
@@ -11,7 +10,7 @@ from metadata.models import Metadata
 class MetadataAdminTests(TestCase):
 
     def test_class(self):
-        self.assertTrue(issubclass(MetadataAdmin, ModelAdmin))
+        self.assertTrue(issubclass(MetadataAdmin, lemon.ModelAdmin))
 
 
 class AdminSiteTests(TestCase):
@@ -20,4 +19,4 @@ class AdminSiteTests(TestCase):
         self.assertNotIn(Metadata, django_admin.site._registry)
 
     def test_metadata_is_registered_in_lemon(self):
-        self.assertIsInstance(lemon_admin.site._registry[Metadata], MetadataAdmin)
+        self.assertIsInstance(lemon.site._registry[Metadata], MetadataAdmin)

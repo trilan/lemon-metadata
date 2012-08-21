@@ -7,8 +7,8 @@ from .models import Metadata
 from .widgets import AdminSmallTextareaWidget
 
 
-if 'lemon.extradmin' in settings.INSTALLED_APPS:
-    from lemon import extradmin as admin
+if 'lemon' in settings.INSTALLED_APPS:
+    import lemon as admin
     CHANGE_FORM_TEMPLATE = 'metadata/lemon/change_form.html'
 else:
     from django.contrib import admin

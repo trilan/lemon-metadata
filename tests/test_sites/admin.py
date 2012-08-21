@@ -1,11 +1,11 @@
-from lemon import extradmin
+import lemon
 from .models import Article, Forum
 
 
-extradmin.site.register(Article,
+lemon.site.register(Article,
     list_display=('title', 'content'),
 )
 
-extradmin.site.register(Forum,
+lemon.site.register(Forum,
     list_display=('name', 'description'),
 )
