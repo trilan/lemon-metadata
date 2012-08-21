@@ -118,9 +118,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
-    'lemon.dashboard',
-    'lemon.filebrowser',
-
     'south',
     'intellipages',
     'metadata',
