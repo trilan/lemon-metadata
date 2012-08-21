@@ -19,6 +19,9 @@ setup(
     author_email='mike@yumatov.org',
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
+    install_requires=[
+        'django-sitesutils',
+    ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',

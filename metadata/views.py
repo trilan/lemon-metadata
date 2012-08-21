@@ -1,8 +1,8 @@
 from django.template.response import TemplateResponse
 from django.utils import translation
 
+from sitesutils.helpers import get_site_id
 from .models import Metadata
-from .utils import get_site_id
 
 
 def sitemap_xml(request):
