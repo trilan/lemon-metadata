@@ -10,7 +10,7 @@ def read(filename):
 
 setup(
     name='lemon-metadata',
-    version='0.1',
+    version='0.1.1',
     license='ISC',
     description='A Django app to manage HTML metadata',
     long_description=read('README.rst'),
