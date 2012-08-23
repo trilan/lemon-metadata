@@ -81,6 +81,10 @@ class ModelMetadata(object):
         try:
             metadata = Metadata.objects.get_for_content_object(instance)
         except Metadata.DoesNotExist:
+            if action != 'post_save':
+                # If instance isn't created or changed directly, skip metadata
+                # creation.
+                return
             metadata = Metadata(content_object=instance)
         self.update_metadata(metadata)
 
