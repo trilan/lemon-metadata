@@ -32,6 +32,8 @@ class MetadataContextObject(object):
             return None
 
     def _get_title(self, metadata, site):
+        if not metadata.title:
+            return ''
         titles = [metadata.title]
         if metadata.title_extend:
             titles.append(site.name)
