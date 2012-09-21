@@ -89,3 +89,9 @@ class MetadataContextProcessorTests(TestCase):
         context = metadata(create_request('/'))
         with translation.override('en'):
             self.assertMetadataIsEmpty(context['metadata'])
+
+    def test_empty_metadata_title_is_not_extended(self):
+        create_metadata(url_path='/', title='', title_extend=True)
+        context = metadata(create_request('/'))
+        with translation.override('en'):
+            self.assertEqual(context['metadata'].title, '')
