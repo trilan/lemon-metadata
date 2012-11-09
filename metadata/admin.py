@@ -9,15 +9,13 @@ from .widgets import AdminSmallTextareaWidget
 
 if 'lemon' in settings.INSTALLED_APPS:
     import lemon as admin
-    CHANGE_FORM_TEMPLATE = 'metadata/lemon/change_form.html'
 else:
     from django.contrib import admin
-    CHANGE_FORM_TEMPLATE = 'metadata/admin/change_form.html'
 
 
 class MetadataAdminMixin(object):
 
-    change_form_template = CHANGE_FORM_TEMPLATE
+    change_form_template = 'metadata/admin/change_form.html'
 
 
 class MetadataModelAdmin(MetadataAdminMixin, admin.ModelAdmin):

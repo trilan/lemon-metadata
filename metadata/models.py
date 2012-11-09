@@ -3,7 +3,6 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import get_language, ugettext_lazy as _
 
 from .managers import MetadataManager
